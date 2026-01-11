@@ -25,9 +25,14 @@ public class AutenticacionController {
 
     @PostMapping
     public ResponseEntity iniciarSesion(@RequestBody @Valid DatosAutenticacion datos) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(datos.login(), datos.contrasenia());
-        var autenticacion = authenticationManager.authenticate(authenticationToken);
-        var tokenJWT = tokenService.generarToken((Usuario) autenticacion.getPrincipal());
-        return ResponseEntity.ok(new DatosTokenJWT(tokenJWT));
+        try {
+            var authenticationToken = new UsernamePasswordAuthenticationToken(datos.login(), datos.contrasenia());
+            var autenticacion = authenticationManager.authenticate(authenticationToken);
+            var tokenJWT = tokenService.generarToken((Usuario) autenticacion.getPrincipal());
+            return ResponseEntity.ok(new DatosTokenJWT(tokenJWT));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
